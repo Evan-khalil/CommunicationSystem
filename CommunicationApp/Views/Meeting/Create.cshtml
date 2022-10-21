@@ -1,0 +1,95 @@
+﻿@model CreateMeetingViewModel
+
+<h1>@ViewData["Title"]</h1>
+@if (ViewData["Title"].Equals("Uppdatera möte"))
+{
+    <p>Om du uppdaterar detta mötet kommer du ta bort alla tidigare svar ifrån de inbjudna och skicka en ny inbjudan till dem. </p>
+}
+<div class="form-group">
+    <label class="control-label" asp-for="Meeting.Subject"></label>
+    <input id="meeting-title" asp-for="Meeting.Subject" type="text" class="form-control">
+</div>
+
+<input id="meeting-id" asp-for="Meeting.Id" type="hidden" />
+
+<div class="form-group">
+    <label class="control-label" asp-for="Meeting.Description"></label>
+    <textarea id="meeting-description" asp-for="Meeting.Description" class="form-control" rows="3"></textarea>
+</div>
+
+<div class="row mt-3">
+    <div class="form-group col-lg-5">
+        <div class="form-group mb-1">
+            <h5>Lägg till nytt förslag</h5>
+            <input id="inputDate" type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" value="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" />
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <label class="control-label">Från</label>
+                <input id="inputStartTime" type="time" value="@DateTime.Now.AddHours(+1).ToString("HH:30")" class="form-control" />
+            </div>
+            <div class="col-6">
+                <label class="control-label">Till</label>
+                <input id="inputEndTime" type="time" value="@DateTime.Now.AddHours(+2).ToString("HH:30")" class="form-control" />
+                <span class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-12 justify-content-end m-0 ml-3">
+            <button id="AddMeetingDate" class="mt-3 btn btn-primary">Lägg till <i class="far fa-calendar-plus"></i></button>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <h6>Valda datum</h6>
+        <ul class="list-group" id="list-tab-dates" role="tablist">
+            @if (Model.Meeting is not null)
+            {
+                foreach (var date in Model.Meeting.DateRequests)
+                {
+                    <li data-start="@date.Start" data-end="@date.End" class="list-group-item list-group-item-action">
+                        @date.Start.ToString("yyyy-MM-dd HH:mm") - @date.End.ToString("HH:mm")
+                        <button class="delete-date btn btn-sm btn-danger float-right"><i class="fas fa-trash-alt"></i></button>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-lg-5">
+        <div class="form-group">
+            <h5>Välj personer att bjuda in</h5>
+            <select id="allPersons" multiple class="form-control">
+                @foreach (var person in Model.AllPersons.Where(p => p.Email != User.Identity?.Name && p.IsDeleted == false))
+                {
+                    <option data-id="@person.Id" value="@person.Id">@person.FullUserName</option>
+                }
+            </select>
+        </div>
+        <div class="row col-12 justify-content-end m-0 ml-3">
+            <button id="AddPersonToMeeting" class="mt-3 btn btn-primary">Lägg till <i class="fas fa-user-plus"></i></button>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <h6>Valda personer</h6>
+        <ul class="list-group" id="list-tab-persons">
+            @if (Model.Meeting is not null)
+            {
+                foreach (var recipient in Model.Meeting.Recipients)
+                {
+                    <li data-id="@recipient.Id" class="list-group-item list-group-item-action">
+                        @recipient.FullUserName
+                        <button class="delete-date btn btn-sm btn-danger float-right"><i class="fas fa-trash-alt"></i></button>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+<div class="row col-12 justify-content-end mt-5">
+    <button id="meeting-submit" class="btn btn-primary">Skicka Förslag <i class="far fa-calendar-check"></i></button>
+</div>
+
+@section Scripts {
+    <script src="/js/MeetingNew.js"></script>
+    <script src="https://momentjs.com/downloads/moment-timezone-with-data.js"></script>
+}

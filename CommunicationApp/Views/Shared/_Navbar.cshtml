@@ -1,0 +1,82 @@
+﻿@inject IMeetingRepository _meeting
+@inject IPersonRepository _person
+@{
+    int confirmCount = 0;
+    int notifyCount = 0;
+    if (User.Identity.IsAuthenticated)
+    {
+        var user = await _person.GetByUserName(User.Identity?.Name);
+        notifyCount = _meeting.GetUnansweredInvitesToPerson(user.Id).Result.Count;
+        confirmCount = await _meeting.GetMeetingsToConfirm(user.Id);
+    }
+}
+
+<nav class="navbar navbar-expand-md navbar-toggleable-md navbar-light bg-communicationColor text-light border-bottom box-shadow mb-3">
+    <div class="container">
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index"><img src="/img/logotype.png" style="max-height: 40px" /></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-md-inline-flex justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                    <a class="nav-link text-light" asp-controller="Home" asp-action="Index">Start</a>
+                </li>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link text-light dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Blogg</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" asp-controller="BlogPosts" asp-action="Index" asp-route-type="Formal">Formell</a>
+                            <a class="dropdown-item" asp-controller="BlogPosts" asp-action="Index" asp-route-type="Informal">Informell</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-controller="BlogPosts" asp-action="SetBlogPost" asp-route-type="Informal">Skriv blogg-inlägg</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-controller="Category" asp-action="Index">Hantera kategorier</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link text-light dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Utveckling</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" asp-controller="Development" asp-action="Index" asp-route-type="Research">Forskning</a>
+                            <a class="dropdown-item" asp-controller="Development" asp-action="Index" asp-route-type="Education">Utbildning</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-controller="Development" asp-action="Create" asp-route-type="Research">Skriv projekt-inlägg</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-controller="Project" asp-action="Index">Hantera projekt</a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link text-light dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            Möte
+                            @if (notifyCount > 0 || confirmCount > 0)
+                            { <span class="badge badge-pill badge-danger">@(notifyCount + confirmCount)</span> }
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" asp-controller="Meeting" asp-action="Index">Global kalender</a>
+                            <a class="dropdown-item" asp-controller="Meeting" asp-action="PersonalCalendar">Personlig kalender</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-controller="Meeting" asp-action="Create">Skapa möteskallelse</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-controller="Meeting" asp-action="Invites">
+                                Mötesinbjudningar
+                                @if (notifyCount > 0)
+                                {<span class="badge badge-pill badge-danger">@notifyCount</span> }
+                            else
+                            { <span class="badge badge-pill badge-secondary">0</span>}
+                            </a>
+                            <a class="dropdown-item" asp-controller="Meeting" asp-action="MyMeetings">
+                                Mina möten
+                                @if (confirmCount > 0)
+                                {<span class="badge badge-pill badge-danger">@confirmCount</span>}
+                            </a>
+                        </div>
+                    </li>
+                }
+            </ul>
+            <partial name="_LoginPartial" />
+        </div>
+    </div>
+</nav>

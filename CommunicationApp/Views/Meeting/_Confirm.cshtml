@@ -1,0 +1,51 @@
+﻿@model Meeting
+@inject IMeetingRepository _meeting
+@{ 
+    int answerCount = _meeting.AnswerCounter(Model);
+    bool haveOptions = false;
+}
+<div class="modal-header">
+    <h4 class="modal-title mt-0" id="myModalLabel">Välj datum för mötet</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <h5>Mötet: @Model.Subject</h5>
+    <p>med <b>@(Model.Recipients.Count)st</b> inbjudna deltagare, har besvarats av <b>@(answerCount)st</b> enligt följande: </p>
+    <form>
+        <div class="radio-meetingDates">
+            @for (int i = 0; i < Model.DateRequests.Count; i++)
+            {
+                if (Model.DateRequests[i].Attendees.Count > 0)
+                {
+                    haveOptions = true;
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="confirmRadios" id="confirmRadio-@Model.Id-@i" value="@Model.DateRequests[i].Id">
+                        <label class="form-check-label" for="confirmRadio-@Model.Id-@i">
+                            @Model.DateRequests[i].Start.ToString("yyyy-MM-dd ddd HH:mm") - @Model.DateRequests[i].End.ToString("HH:mm") - <b>@(Model.DateRequests[i].Attendees.Count)st</b> kan denna dagen
+                        </label>
+                    </div>
+                }
+            }
+            <ul>
+                <li><b>@(Model.NonAttenders.Count)st</b> kan inte delta</li>
+                <li><b>@(Model.Recipients.Count - answerCount)st</b> har ännu inte svarat på inbjudan</li>
+            </ul>
+            @if (Model.Recipients.Count == Model.NonAttenders.Count)
+            {
+                <p>
+                    <b>Ingen kan komma på ditt möte!</b><br />
+                    Vänligen skapa en ny möteskallelse.
+                </p>
+            }
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    @if (haveOptions)
+    {
+        <button id="ConfirmMeetingDate" class="ConfirmMeetingDate btn btn-primary" onclick="$('#modal-confirm-@Model.Id').modal('hide')" type="submit">Bekräfta mötesdatum</button>
+    }
+    <button type="button" class="btn btn-secondary waves-effect" data-dismiss="modal">Stäng</button>
+</div>

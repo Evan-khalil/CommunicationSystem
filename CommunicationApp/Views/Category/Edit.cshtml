@@ -1,0 +1,59 @@
+﻿@model EditCategoryViewModel
+@{
+    ViewData["Title"] = "Ändra kategori";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger fade in show">
+        <button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">×</button>
+        @Model.ErrorMessage
+    </div>
+}
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="Id" type="hidden" class="form-control" />
+            </div>
+            <div class="form-row mt-2">
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input id="categoryName" asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-row mt-2">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.AllUsers, new { @for = "allUsers" })
+                    <select id="allUsers" asp-for="UserId" asp-items="@Model.AllUsers" class="custom-select"></select>
+                    <input id="btnAddParticipant" type="button" value="Lägg till deltagare" class="btn btn-primary mt-3" />
+                </div>
+            </div>
+            <div class="form-row mt-2">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Participants, new { @for = "participants" })
+                    <select id="participants" asp-for="ParticipantIds" asp-items="@Model.Participants" class="custom-select multiselect-dropdown" multiple = "multiple"></select>
+                    <input id="btnRemoveParticipant" type="button" value="Tag bort deltagare" class="btn btn-primary mt-3" />
+                </div>
+            </div>
+            <div class="form-row mt-2">
+                <div class="form-group">
+                    <input id="btnSave" type="submit" value="Spara" class="btn btn-primary" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Visa kategorier</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/Category.js"></script>
+}

@@ -1,0 +1,115 @@
+﻿@model MeetingDetailsViewModel
+
+@if (Model.Subject is not null)
+{
+    <div class="row">
+        <div class="col-4">
+            Möte:
+        </div>
+        <div class="col-8">
+            <b>@Model.Subject</b>
+        </div>
+    </div>
+}
+<div class="row">
+    <div class="col-4">
+        Mötesbeskrivning:
+    </div>
+    <div class="col-8">
+        @Model.Description
+    </div>
+</div>
+<div class="row">
+    <div class="col-4">
+        Datum:
+    </div>
+    <div class="col-8">
+        @Model.Date
+    </div>
+</div>
+<div class="row">
+    <div class="col-4">
+        Tid:
+    </div>
+    <div class="col-8">
+        @Model.Time
+    </div>
+</div>
+<div class="row">
+    <div class="col-4">
+        Mötessamordnare:
+    </div>
+    <div class="col-8">
+        @Model.Host.FullUserName
+    </div>
+</div>
+<div class="row">
+    <div class="col-4">
+        @if(Model.Time == "00:00")
+        { <span>Inbjudna:</span> }
+        else
+        { <span>Deltagare:</span> }
+    </div>
+    <div class="col-8">
+        @foreach (var attendee in @Model.Attendees)
+        {
+            <span>@attendee.Name</span><br />
+        }
+    </div>
+</div>
+<div class="d-flex align-items-end flex-column">
+    <div class="p-2">
+        @if (User.Identity.Name == Model.Host.Email || User.IsInRole("Admin"))
+        {
+            @if (User.IsInRole("Admin") && User.Identity.Name != Model.Host.Email)
+            {
+                <span>Admin-åtgärder: </span>
+            }
+            <a href="/Meeting/Edit?Id=@Model.Id" class="btn btn-primary"><i class="fas fa-pen"></i></a>
+            <button id="deleteMeeting" data-id="@Model.Id" class="meeting-delete btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+        }
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(() => {
+        $('#deleteMeeting').click(function (event) {
+            event.preventDefault();
+            deleteMeetingInCal();
+        });
+
+        function deleteMeetingInCal() {
+            var id = $("#deleteMeeting").attr("data-id");
+            var object = {};
+            object.id = id;
+
+            alertify
+                .okBtn("Ok")
+                .cancelBtn("Avbryt")
+                .confirm("Är du säker på att du vill radera detta möte?<br /> Detta går ej att ångra.",
+                    async function (ev) {
+                        ev.preventDefault();
+                        try {
+                            $.ajax({
+                                type: "POST",
+                                url: "/api/meeting/delete",
+                                data: JSON.stringify(object),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json"
+                            });
+                        } catch (error) {
+                            console.error(error);
+                        }
+                        alertify.success("Mötet är borttaget");
+                        location.reload();
+                    },
+                    function (ev) {
+                        ev.preventDefault();
+                        alertify.error("Inga ändringar har skett");
+                    }
+                );
+        };
+    });
+</script>
+}

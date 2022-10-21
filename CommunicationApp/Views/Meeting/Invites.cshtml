@@ -1,0 +1,38 @@
+﻿@model List<Meeting>
+@inject IMeetingRepository _meeting
+
+<h1>@ViewData["Title"]</h1>
+
+@if (Model.Count is not 0)
+ {
+    <h4>Du är inbjuden till mötena: </h4>
+    <div class="table-responsive-sm">
+        <table class="table table-hover table-sm">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 40rem">Möte</th>
+                    <th scope="col">Antal svar</th>
+                    <th scope="col">Mötesvärd</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var meeting in Model)
+                {
+                    <tr>
+                        <th scope="row" style="width: 40rem"><a href="/Meeting/Chooser/@meeting.Id">@meeting.Subject</a></th>
+                        <td><b>@_meeting.AnswerCounter(meeting)</b> av <b>@meeting.Recipients.Count</b></td>
+                        <td>@meeting.Host.FullUserName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+ }
+else
+{
+    <p>Du har inte blivit inbjuden till något möte...</p>
+}
+
+<div class="row col-12 justify-content-end mt-5">
+    <a href="/Meeting/Create" class="btn btn-primary">Skapa ett möte <i class="far fa-calendar-plus"></i></a>
+</div>

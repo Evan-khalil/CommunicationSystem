@@ -1,0 +1,143 @@
+﻿@model CommunicationApp.ViewModels.BlogPostsViewModel
+@{
+    if (Model.BlogPosts.Count() == 0 && !string.IsNullOrEmpty(Model.NoBlogPostsMessage))
+    {
+        <p>@Model.NoBlogPostsMessage</p>
+        return;
+    }
+
+    var username = "";
+    if (User.Identity != null)
+    {
+        username = User.Identity.Name;
+    }
+
+    foreach (var post in Model.BlogPosts)
+    {
+    <div class="row mt-3 bg-light rounded pt-3 pb-3 blog-post">
+        <div class="col-12">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <a asp-controller="BlogPosts" asp-action="Details" asp-route-id="@post.Id">
+                                <h3 class="border-bottom pb-2">@post.Title</h3>
+                            </a>
+                            <input class="post-id" hidden value="@post.Id" />
+                            <article style="overflow: hidden">
+
+                                <p>
+                                    @Html.Raw((Model.IsSearchResult ? post.GetExcerpt() : post.Text).Replace(Environment.NewLine, "<p>"))
+                                </p>
+
+                            </article>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            @if (post.Files.Count > 0)
+                            {
+                                @foreach (var file in post.Files)
+                                {
+                                    if (file.FileType.Equals(".docx") || file.FileType.Equals(".doc"))
+                                    {
+                                        <a href="~/uploads/@file.Url" class="mr-2" target="_blank"><i class="fas fa-2x fa-file-word"></i></a>
+                                    }
+                                    if (file.FileType.Equals(".pdf"))
+                                    {
+                                        <a href="~/uploads/@file.Url" class="mr-2" target="_blank"><i class="fas fa-2x fa-file-pdf"></i></a>
+                                    }
+                                    if (file.FileType.Equals(".jpg") || file.FileType.Equals(".jpeg") || file.FileType.Equals(".png") || file.FileType.Equals(".gif"))
+                                    {
+                                        <a href="~/uploads/@file.Url" class="mr-2" data-toggle="lightbox"><i class="fas fa-2x fa-file-image"></i></a>
+                                    }
+                                    if (file.FileType.Equals(".xlsx"))
+                                    {
+                                        <a href="~/uploads/@file.Url" class="mr-2" target="_blank"><i class="fas fa-2x fa-file-excel"></i></a>
+                                    }
+                                    if (file.FileType.Equals(".ppt"))
+                                    {
+                                        <a href="~/uploads/@file.Url" class="mr-2" target="_blank"><i class="fas fa-2x fa-file-powerpoint"></i></a>
+                                    }
+                                    if (file.FileType.Equals(".zip") || file.FileType.Equals(".rar"))
+                                    {
+                                        <a href="~/uploads/@file.Url" class="mr-2" target="_blank"><i class="fas fa-2x fa-file-archive"></i></a>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p class="border-top pt-2 mb-0 mt-3">
+                                <small>
+                                    Författare: @post.Author.FirstName @post.Author.LastName
+                                    @if (post.Author.IsDeleted == true)
+                                    {
+                                        <span>(Kontot är avslutat)</span>
+                                    }
+
+
+                                    | Publicerat: @post.DatePublished.ToString("yyyy-MM-dd HH:mm")
+                                    @if (post.DatePublished.ToString("yyyy-MM-dd HH:mm").Equals(post.DateEdited.ToString("yyyy-MM-dd HH:mm")) is false)
+                                    {
+                                        @(" | Ändrat: " + post.DateEdited.ToString("yyyy-MM-dd HH:mm"))
+                                    }
+                                    | Kategorier:
+                                    @if (post.Categories != null)
+                                    {
+                                        @foreach (var cat in post.Categories)
+                                        {
+                                            <span class="pl-2">
+                                                <mark>
+                                                    @cat.Name
+                                                </mark>
+                                            </span>
+                                        }
+                                    }
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2 mt-1">
+                    @if (!Model.IsSearchResult && User.Identity.Name == post.Author.Email)
+                    {
+                        <a asp-controller="BlogPosts" asp-action="SetBlogPost" asp-route-id="@post.Id" class="btn btn-sm btn-primary"><i class="fas fa-pen"></i></a>
+                    }
+
+                    @if (!Model.IsSearchResult && (User.IsInRole("Admin") || User.Identity.Name == post.Author.Email))
+                    {
+                        <a asp-controller="BlogPosts" asp-action="RemoveBlogPost" asp-route-id="@post.Id" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></a>
+                    }
+                </div>
+            </div>
+            @if (!Model.IsSearchResult)
+            {
+                <div class="row">
+                    <div class="col-12 mt-3 comment-section">
+                        <div class="row comment-form">
+                            <div class="col-10">
+                                <div class="form-group">
+                                    <input class="signedIn-user" hidden value="@username" />
+                                    <textarea data-author="@username" class="comment-text form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <button class="comment-submit btn btn-primary">Kommentera</button>
+                            </div>
+                        </div>
+
+                        <h6>
+                            Kommentarer <a data-toggle="collapse" href="#collapse-@post.Id" aria-expanded="false" aria-controls="collapseComments">(<span class="comment-count">@post.Comments.Count</span>)</a>
+                        </h6>
+                        <div class="collapse comment-wall" id="collapse-@post.Id">
+                            <partial model="post.Comments" name="_CommentsPartial" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    }
+}

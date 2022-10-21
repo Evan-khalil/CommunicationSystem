@@ -1,0 +1,62 @@
+﻿@model DevelopmentViewModel
+
+<div class="mt-5 mb-5 d-flex justify-content-between">
+    <h1>Utveckling - @ViewData["Title"]</h1>
+    <div>
+        @{ 
+            string utvecklingsTyp = ViewData["Title"].Equals("Utbildning") ? "Education" : "Research";
+            string utvecklingsEmoji = ViewData["Title"].Equals("Utbildning") ? "fas fa-graduation-cap" : "fas fa-flask";
+        }
+        <a href="/Development/Create?type=@utvecklingsTyp" class="btn btn-primary float-right">Skapa inlägg <i class="@utvecklingsEmoji"></i></a>
+    </div>
+</div>
+<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    @for (int i = 0; i < Model.Categories.Count; i++)
+    {
+        var category = Model.Categories[i];
+        string isActive = i==0 ? "active" : ""; //Lägger till active på i==0 (index0) , kanske inte behövs sen?
+        string isSelected = i == 0 ? "true" : "false";
+        <li class="nav-item" role="presentation">
+            <a class="nav-link @isActive" id="pills-@category.Id-tab" data-toggle="pill" href="#pills-@category.Id" role="tab" aria-controls="pills-@category.Id" aria-selected="@isSelected">@category.Name</a>
+        </li>
+    }
+</ul>
+<div class="tab-content" id="pills-tabContent">
+    @for (int i = 0; i < Model.Categories.Count; i++)
+    {
+        var category = Model.Categories[i];
+        string isActive = i == 0 ? "show active" : ""; //Lägger till active på i==0 (index0) , kanske inte behövs sen?
+        var viewModel = new DevelopmentViewModel
+        {
+            BlogPosts = Model.BlogPosts.Where(b => b.Categories.All(c => c.Id == category.Id)).ToList(),
+            CurrentPage = Model.CurrentPage,
+            CurrentUrl = Model.CurrentUrl,
+            IsSearchResult = Model.IsSearchResult,
+            NoBlogPostsMessage = Model.NoBlogPostsMessage,
+            TotalPages = Model.TotalPages,
+            TotalPosts = Model.TotalPosts
+        };
+
+        <div class="tab-pane fade @isActive" id="pills-@category.Id" role="tabpanel" aria-labelledby="pills-@category.Id-tab">
+            <partial name="_PostsPartial" model="viewModel" />
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/Comments.js"></script>
+    <script src="~/lib/ekko-lightbox/ekko-lightbox.min.js"></script>
+    <script src="~/lib/readmore/readmore.min.js"></script>
+    <script>
+        $(document).on('click', '[data-toggle="lightbox"]', function (event) {
+            event.preventDefault();
+            $(this).ekkoLightbox();
+        });
+
+        $('article').readmore({
+            collapsedHeight: 180,
+            moreLink: '<a href="#">Läs mer</a>',
+            lessLink: '<a href="#">Läs mindre</a>'
+        });
+    </script>
+}

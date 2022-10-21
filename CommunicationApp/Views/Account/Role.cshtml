@@ -1,0 +1,47 @@
+﻿@using CommunicationApp.Views.Account
+@model UserRole
+@{
+    ViewData["Title"] = "Hantera behörighet";
+    ViewData["ActivePage"] = ManageNavPages.Role;
+    Layout = "_ManageLayout";
+}
+
+<h4>Hantera behörighet</h4>
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" asp-action="Role" asp-controller="Account">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Person"></label>
+                <select asp-for="Person" class="form-control">
+                  @foreach(var admin in Model.Admins
+                      .Where(p => p.IsDeleted == false)
+                      .OrderBy(p => p.FirstName))
+                  {
+                      <option value="@admin.Id">@admin.Name (Administratör)</option>
+                  }
+                  @foreach(var person in Model.Users
+                      .Where(p => p.IsDeleted == false)
+                      .OrderBy(p => p.FirstName))
+                  {
+                      <option value="@person.Id">@person.Name (Användare)</option>
+                  }
+                </select>
+                <span asp-validation-for="Person" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RoleName"></label>
+                <select asp-for="RoleName" class="form-control">
+                    <option value="User">Användare</option>
+                    <option value="Admin">Administratör</option>
+                </select>
+                <span asp-validation-for="RoleName" class="text-danger"></span>
+            </div>
+            <button id="update-profile-button" type="submit" class="btn btn-primary">Spara</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,69 @@
+﻿@model SetBlogPostViewModel
+@{
+    ViewBag.Title = Model.Title == "" ? "Skapa nytt blogg-inlägg" : "Ändra blogg-inlägg";
+
+}
+
+<div class="container mt-5">
+    <h2>@(ViewBag.Title)</h2>
+
+    @using (Html.BeginForm("SetBlogPost", "BlogPosts", FormMethod.Post, new { @class = "form-horizontal mt-3", role = "form", enctype = "multipart/form-data" }))
+    {
+        @Html.HiddenFor(x => x.Id);
+
+        <div class="form-row mt-2">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(x => x.Title, new { @for = "inputBlogTitle" })
+                @Html.TextBoxFor(x => x.Title, new { @class = "form-control", id = "inputBlogTitle", Value = @Model.Title })
+                @Html.ValidationMessageFor(x => x.Title, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(x => x.BlogTypes, new { @for = "inputBlogType" })
+                <select id="inputBlogType" class="custom-select" name="SelectedBlogType">
+                    @if (Model.SelectedBlogType is null || Model.SelectedBlogType.Equals("Formal"))
+                    {
+                        <option value="Informal">Informell</option>
+                        <option value="Formal" selected>Formell</option>
+                    }
+                    else
+                    {
+                        <option value="Informal" selected>Informell</option>
+                        <option value="Formal">Formell</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row mt-2">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(x => x.Text, new { @for = "inputBlogText" })
+                @Html.TextAreaFor(x => x.Text, 10, 50, new { @class = "form-control", id = "inputBlogText", Value = @Model.Text })
+                @Html.ValidationMessageFor(x => x.Text, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-6">
+                <div>
+                    @Html.LabelFor(x => x.Categories, new { @for = "blogCategories" })
+                    @Html.DropDownListFor(x => x.Categories, new MultiSelectList(Model.Categories, "Name"), new { @class = "custom-select multiselect-dropdown", id = "blogCategories", multiple = "true" })
+                </div>
+                <div>
+                    @Html.LabelFor(x => x.NewCategory)
+                    <div class="input-group">
+                        @Html.TextBoxFor(x => x.NewCategory, new { @class = "form-control", id = "newCategory", Value = @Model.NewCategory })
+                        @Html.ValidationMessageFor(x => x.NewCategory, "", new { @class = "text-danger" })
+                        <a id="btnAddCategory" class="btn btn-primary ml-2">Ny kategori <i class="far fa-folder-open"></i></a>
+                    </div>
+                </div>
+                <div class="input-group mt-4">
+                    @Html.TextBoxFor(x => x.FileUploads, new { type = "file", @class = "form-control-file", multiple = "multiple", accept = ".jpg,.png,.jpeg,.gif,.pdf,.doc,.docx,.ppt,.xlsx,.zip,.rar" })
+                    @Html.ValidationMessageFor(x => x.FileUploads, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <input id="btnSubmit" type="submit" value="@Html.Raw(Model.Title == "" ? "Skapa Inlägg" : "Ändra Inlägg")" class="btn btn-primary" />
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/BlogPosts.js"></script>
+}

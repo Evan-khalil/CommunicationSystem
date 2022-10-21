@@ -1,0 +1,73 @@
+﻿@using CommunicationApp.Views.Account
+@model DeleteUserViewModel
+@{
+    ViewData["Title"] = "Ta bort användare";
+    ViewData["ActivePage"] = ManageNavPages.DeleteUser;
+    Layout = "_ManageLayout";
+}
+
+<h4>Ta bort användare</h4>
+<div class="row">
+    <div class="col-md-6">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Person"></label>
+                <select asp-for="Person" class="form-control">
+                    @foreach (var person in Model.Persons.Where(p => p.IsDeleted == false))
+                    {
+                        <option value="@person.Id">@person.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="Person" class="text-danger"></span>
+            </div>
+    </div>
+</div>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
+    Ta bort användare
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ta bort användare</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Är du säker på att du vill ta bort denna användare?
+                <br/>
+                (Detta går inte att ångra)
+            </div>
+            <div class="modal-footer">
+                <form id="profile-form" asp-action="DeleteUser" asp-controller="Account">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Stäng</button>
+                    <button type="submit" class="btn btn-danger" id="SaveButton" formaction="/Account/DeleteUser/0">Ta bort användare</button>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+<script>
+    $(function () {
+        var id = $('select option:selected').val();
+        var address = "/Account/DeleteUser/" + id;
+        $('#SaveButton').attr('formaction', address);
+
+        $('select').on('change',
+            function () {
+                var id = $('select option:selected').val();
+                var address = "/Account/DeleteUser/" + id;
+                $('#SaveButton').attr('formaction', address);
+            });
+    });
+</script>
+}

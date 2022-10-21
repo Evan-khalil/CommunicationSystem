@@ -1,0 +1,31 @@
+﻿@model List<Comment>
+@{
+    var username = "";
+    if (User.Identity != null)
+    {
+        username = User.Identity.Name;
+    }
+}
+
+@foreach (var comment in Model)
+{
+    <div class="row comment-post">
+        <div class="col-10">
+            <div class="alert alert-primary">
+                <p>@comment.Text</p>
+                <span class="small">
+                    @comment.Author.FirstName @comment.Author.LastName
+                        | @comment.Date
+                </span>
+            </div>
+        </div>
+        <div class="col-2">
+            @{
+                if (comment.Author.Email == username || User.IsInRole("Admin"))
+                {
+                    <button data-id="@comment.Id" class="comment-delete btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                }
+            }
+        </div>
+    </div>
+}

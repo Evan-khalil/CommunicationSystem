@@ -1,0 +1,73 @@
+﻿@model IEnumerable<CategoryViewModel>
+@inject UserManager<Person> UserManager
+@{
+    ViewData["Title"] = "Projekt";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string currentUserId = UserManager.GetUserId(User);
+}
+<div class="row">
+    <h1 class="col-sm-6">@ViewData["Title"]</h1>
+    <p class="col-sm-6 text-right">
+        <a asp-action="Create" class="btn btn-primary">Lägg till projekt <i class="far fa-folder"></i></a>
+    </p>
+</div>
+@if (!string.IsNullOrEmpty(ViewData["InfoMessage"]?.ToString()))
+{
+    <div class="alert alert-info fade in show">
+        <button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">×</button>
+        @ViewData["infoMessage"]?.ToString()
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <div class="alert alert-danger fade in show">
+        <button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">×</button>
+        @ViewData["errorMessage"]?.ToString()
+    </div>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                Skapad av
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+            <th style="width: 7rem;">
+                Admin
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.Raw(item.Creator != null ? item.Creator.Name : string.Empty)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td style="width: 7rem;">
+                    @if (item.Creator?.Id == currentUserId || User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="Project" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary"><i class="fas fa-pen"></i></a>
+                        <a asp-controller="Project" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></a>
+                    }
+                    else
+                    {
+                        @Html.Raw("Ej behörig");
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

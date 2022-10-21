@@ -1,0 +1,35 @@
+﻿@model CommunicationApp.ViewModels.BlogPostsViewModel
+
+<div class="mt-5 mb-5 d-flex justify-content-between">
+    <h1>Blogg - @ViewData["Title"]</h1>
+    <div>
+        @{
+            string bloggTyp = ViewData["Title"].Equals("Informell") ? "Informal" : "Formal";
+            string bloggEmoji = ViewData["Title"].Equals("Informell") ? "fas fa-pencil-alt" : "fas fa-pen-alt";
+        }
+        <a href="/BlogPosts/SetBlogPost?type=@bloggTyp" class="btn btn-primary float-right">
+            Skriv inlägg <i class="@bloggEmoji"></i>
+        </a>
+    </div>
+</div>
+
+<partial name="_PostsPartial" />
+<partial name="_Pagination" />
+
+@section Scripts{
+    <script src="~/js/Comments.js"></script>
+    <script src="~/lib/ekko-lightbox/ekko-lightbox.min.js"></script>
+    <script src="~/lib/readmore/readmore.min.js"></script>
+    <script>
+        $(document).on('click', '[data-toggle="lightbox"]', function (event) {
+            event.preventDefault();
+            $(this).ekkoLightbox();
+        });
+
+        $('article').readmore({
+            collapsedHeight: 180,
+            moreLink: '<a href="#">Läs mer</a>',
+            lessLink: '<a href="#">Läs mindre</a>'
+        });
+    </script>
+}

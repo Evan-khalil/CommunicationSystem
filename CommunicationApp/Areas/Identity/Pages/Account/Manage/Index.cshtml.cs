@@ -1,0 +1,113 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using CommunicationApp.Data;
+using CommunicationApp.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+
+namespace CommunicationApp.Areas.Identity.Pages.Account.Manage
+{
+    public partial class IndexModel : PageModel
+    {
+        private readonly UserManager<Person> _userManager;
+        private readonly SignInManager<Person> _signInManager;
+        //private readonly DbSet<Person> _dbSet;
+
+        public IndexModel(
+            UserManager<Person> userManager,
+            SignInManager<Person> signInManager)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            //_dbSet = dbSet;
+        }
+
+        public string Username { get; set; }
+
+        [TempData]
+        public string StatusMessage { get; set; }
+
+        [BindProperty]
+        public InputModel Input { get; set; }
+
+        public class InputModel
+        {
+            [Display(Name = "Förnamn")]
+            public string FirstName { get; set; }
+
+            [Display(Name = "Efternamn")]
+            public string LastName { get; set; }
+
+            [Phone]
+            [Display(Name = "Telefon")]
+            public string PhoneNumber { get; set; }
+        }
+
+        private async Task LoadAsync(Person user)
+        {
+            
+            var userName = await _userManager.GetUserNameAsync(user);
+            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            var firstName = user.FirstName;
+            var lastName = user.LastName;
+
+            Username = userName;
+
+            Input = new InputModel
+            {
+                PhoneNumber = phoneNumber,
+                FirstName = firstName,
+                LastName = lastName
+            };
+        }
+
+        public async Task<IActionResult> OnGetAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            await LoadAsync(user);
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                await LoadAsync(user);
+                return Page();
+            }
+
+            //_dbSet.Update(user);
+
+            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            if (Input.PhoneNumber != phoneNumber)
+            {
+                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+                if (!setPhoneResult.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to set phone number.";
+                    return RedirectToPage();
+                }
+            }
+
+            await _signInManager.RefreshSignInAsync(user);
+            StatusMessage = "Your profile has been updated";
+            return RedirectToPage();
+        }
+    }
+}

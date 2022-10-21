@@ -1,0 +1,37 @@
+﻿@using CommunicationApp.Views.Account
+@model Email
+@{
+    ViewData["Title"] = "Ändra e-post";
+    ViewData["ActivePage"] = ManageNavPages.Email;
+    Layout = "_ManageLayout";
+}
+
+<h4>@ViewData["Title"]</h4>
+
+<div class="row">
+    <div class="col-md-6">
+        <form id="email-form" asp-action="Email">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="OldEmail"></label>
+                <div class="input-group">
+                    <input asp-for="OldEmail" class="form-control" disabled />
+                    <div class="input-group-append">
+                        <span class="input-group-text text-success font-weight-bold">✓</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewEmail"></label>
+                <input asp-for="NewEmail" class="form-control" />
+                <span asp-validation-for="NewEmail" class="text-danger"></span>
+            </div>
+            <button id="change-email-button" type="submit" class="btn btn-primary">Ändra e-post</button>
+        </form>
+    </div>
+</div>
+<p class="mt-2">När du ändrar din e-post kommer du loggas ut automatiskt.</p>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
