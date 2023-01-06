@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "PEAXHfpn5nUC/PCyTeDlfDCoB5odkMrRC1G8S9H16+xRLFvaqLyr0qH8ZW7HnwrQ4Yuu4UArqF4GdkHbIDhgiQ==",
+  "dgSpecHash": "1vexzIpyUSYzb0ZiKKB6P5X+8OOmpbA/mVj88eixksVUK3TF//o0bhqHHFkq77qETJKMNZQNys+z/xiILF7hiw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Evank\\source\\repos\\2021VT-IK207G-Team8-Scrum-main\\2021VT-IK207G-Team8-Scrum-main\\src\\CommunicationApp\\CommunicationApp.csproj",
+  "projectFilePath": "D:\\Repositories\\CommunicationSystem\\CommunicationApp\\CommunicationApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Evank\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Evank\\.nuget\\packages\\microsoft.aspnetcore.authentication.certificate\\5.0.5\\microsoft.aspnetcore.authentication.certificate.5.0.5.nupkg.sha512",

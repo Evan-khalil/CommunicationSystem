@@ -127,7 +127,7 @@ namespace CommunicationApp.Repository
             Person person = await _person.GetById(personId);
 
             List<Meeting> meetingsToConfirm = await GetAllMeetings();
-            meetingsToConfirm = meetingsToConfirm.Where(m => m.FinalDate is null && m.Host.Id.Equals(personId)).OrderBy(m => m.Subject).ToList();
+            //meetingsToConfirm = meetingsToConfirm.Where(m => m.FinalDate is null && m.Host.Id.Equals(personId)).OrderBy(m => m.Subject).ToList();
 
             int count = 0;
             foreach (var meeting in meetingsToConfirm)

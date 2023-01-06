@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Evank\\source\\repos\\2021VT-IK207G-Team8-Scrum-main\\2021VT-IK207G-Team8-Scrum-main\\src\\CommunicationApp\\CommunicationApp.csproj": {}
+    "D:\\Repositories\\CommunicationSystem\\CommunicationApp\\CommunicationApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Evank\\source\\repos\\2021VT-IK207G-Team8-Scrum-main\\2021VT-IK207G-Team8-Scrum-main\\src\\CommunicationApp\\CommunicationApp.csproj": {
+    "D:\\Repositories\\CommunicationSystem\\CommunicationApp\\CommunicationApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Evank\\source\\repos\\2021VT-IK207G-Team8-Scrum-main\\2021VT-IK207G-Team8-Scrum-main\\src\\CommunicationApp\\CommunicationApp.csproj",
+        "projectUniqueName": "D:\\Repositories\\CommunicationSystem\\CommunicationApp\\CommunicationApp.csproj",
         "projectName": "CommunicationApp",
-        "projectPath": "C:\\Users\\Evank\\source\\repos\\2021VT-IK207G-Team8-Scrum-main\\2021VT-IK207G-Team8-Scrum-main\\src\\CommunicationApp\\CommunicationApp.csproj",
+        "projectPath": "D:\\Repositories\\CommunicationSystem\\CommunicationApp\\CommunicationApp.csproj",
         "packagesPath": "C:\\Users\\Evank\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Evank\\source\\repos\\2021VT-IK207G-Team8-Scrum-main\\2021VT-IK207G-Team8-Scrum-main\\src\\CommunicationApp\\obj\\",
+        "outputPath": "D:\\Repositories\\CommunicationSystem\\CommunicationApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "D:\\Files\\VisualStudio\\Shared\\NuGetPackages"
